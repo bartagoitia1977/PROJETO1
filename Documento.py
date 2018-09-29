@@ -137,7 +137,7 @@ class Documento:
 		for letra in self._documento:
 			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
 			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
-			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != "!")):
+			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "!")):
 				if (ord(letra) >= 65) and (ord(letra) <= 90):
 					self._palavra += chr(ord(letra) + 32)
 					self._nova_palavra = True
