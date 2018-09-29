@@ -1,7 +1,26 @@
+###############################################################################
+# Univesidade Federal de Pernambuco -- UFPE (http://www.ufpe.br)
+# Centro de Informatica -- CIn (http://www.cin.ufpe.br)
+# Bacharelado em Sistemas de Informacao
+# IF969 -- Algoritmos e Estruturas de Dados
+#
+# Autor:    Bruno Artagoitia Vicente do Nascimento
+# Email:    bavn@cin.ufpe.br
+# Data:        2018-10-10
+#
+# Descricao:  PROJETO1B - CLASSE DOCUMENTO
+#
+# Licenca: Copyright(c) 2018 Bruno Artagoitia Vicente do Nascimento
+#
+###############################################################################
 
 import numpy as np
+from Ngrama import Ngrama
 
 class No:
+	'''
+	NO VAZIO DA LISTA ENCADEADA
+	'''
 	def __init__(self,objeto = None,proximo = None,indice = 0):
 		self._objeto = objeto
 		self._proximo = proximo
@@ -39,23 +58,29 @@ class No:
 		return self.objetostring
 
 class LE:
+	'''
+	LISTA ENCADEADA SIMPLES (APENAS FUNCOES QUE SERÃO UTILIZADAS)
+	'''
 	def __init__(self):
 		self._cabeca = self._fim = No()
-		self._aux = self._cabeca.proximo
 		
+
 	def anexar(self,item):
 		self._item = item
 		self._novono = No(self._item,None,0)
 		index = 0
 		aux = self._cabeca.proximo
-		while not(aux is None):
-			aux = aux.proximo
-			index += 1
 		if (aux is None):
+			self._cabeca.proximo = self._novono
+			self._fim = self._novono
+		else:
+			while not(aux is None):
+				aux = aux.proximo
+				index += 1
+			self._novono.indice = index
 			self._fim.proximo = self._novono
 			self._fim = self._novono
-			self._fim.indice = index
-
+			
 	def __str__(self):
 		self._LEstring = "["
 		aux = self._cabeca.proximo
@@ -76,34 +101,36 @@ class LE:
 		self.__item = item
 		finder = self._cabeca.proximo
 		if (finder is None):
-			raise KeyError
+			raise StopIteration
 		else:
 			while not(finder is None) and (finder.indice != self.__item):
 				finder = finder.proximo
 			if (finder is None):
-				raise KeyError
+				raise StopIteration
 			else:
 				if (finder.indice == self.__item):
 					return finder.objeto
 
-	def __iter__(self):
-		if not (self._aux is None):
-			return self._aux.objeto
-		else:
-			raise StopIteration
-
-	def __next__(self):
-		if not (self._aux is None):
-			self._aux = self._aux.proximo
-		else:
-			raise StopIteration
+	def __len__(self):
+		countaux = self._cabeca.proximo
+		count = 0
+		while not(countaux is None):
+			countaux = countaux.proximo
+			count += 1
+		return count
 				
 class Documento:
-	
+	'''
+	CLASSE DOCUMENTO
+	'''
 	def __init__(self,documento):
 		self._documento = documento
 		
-	def cata_palavra(self):
+	def contencao(self):
+		'''
+		Concentra todas as palavras do documento adotando filtro de letras minusculas e minimizando
+		a poluição por caracteres alheios: espacos, pontos de interrogacao, exclamacao, etc.
+		'''
 		self._lista_de_palavras = np.array([])
 		self._nova_palavra = True
 		self._palavra = ""
@@ -128,11 +155,14 @@ class Documento:
 
 		return self._lista_de_palavras
 
-
-		
-
-
-	
-
-
-
+	def gerarNGramas(self):
+		'''
+		Gera lista encadeada contendo todos os Ngramas (5-grama) de um dado vetor de palavras.
+		'''
+		self._lista_palavras = self.contencao()
+		self._lista_de_ngramas = LE()
+		self._indice_ngrama = 0
+		for ng in range(len(self._lista_palavras) - 4):
+			self._lista_de_ngramas.anexar(Ngrama(self._lista_palavras,self._indice_ngrama))
+			self._indice_ngrama += 1
+		return self._lista_de_ngramas
