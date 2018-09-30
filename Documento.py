@@ -140,7 +140,7 @@ class Documento:
 			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
 			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
 			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "*") and
-			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/")):
+			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/") and (letra != "	")):
 				if (ord(letra) >= 65) and (ord(letra) <= 90):
 					self._palavra += chr(ord(letra) + 32)
 					self._nova_palavra = True
@@ -171,7 +171,7 @@ class Documento:
 			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
 			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
 			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "*") and
-			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/")):
+			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/") and (letra != "	")):
 				if (ord(letra) >= 65) and (ord(letra) <= 90):
 					self._palavra += chr(ord(letra) + 32)
 					self._nova_palavra = True
@@ -198,7 +198,8 @@ class Documento:
 		self._lista_de_ngramas1 = LE()
 		self._indice_ngrama = 0
 		for ng in range(len(self._lista_palavras1) - 4):
-			self._lista_de_ngramas1.anexar(Ngrama(self._lista_palavras1,self._indice_ngrama))
+			self._cincograma = Ngrama(self._lista_palavras1,self._indice_ngrama)
+			self._lista_de_ngramas1.anexar(self._cincograma.cinco_grama())
 			self._indice_ngrama += 1
 		return self._lista_de_ngramas1
 
@@ -211,11 +212,15 @@ class Documento:
 		self._lista_de_ngramas2 = LE()
 		self._indice_ngrama = 0
 		for ng in range(len(self._lista_palavras2) - 4):
-			self._lista_de_ngramas2.anexar(Ngrama(self._lista_palavras2,self._indice_ngrama))
+			self._cincograma = Ngrama(self._lista_palavras2,self._indice_ngrama)
+			self._lista_de_ngramas2.anexar(self._cincograma.cinco_grama())
 			self._indice_ngrama += 1
 		return self._lista_de_ngramas2
 
 	def comparaNGramas(self,Ngrama_susp,Ngrama_ref):
+		'''
+		Compara 2 Ngramas: suspeito x referencia.
+		'''
 		self._Ngrama_susp = Ngrama_susp
 		self._Ngrama_ref = Ngrama_ref
 		self._teste_saida = False
@@ -237,16 +242,11 @@ class Documento:
 				return self._teste_saida
 
 	def contencao(self):
-		self._nlista1 = self.palavras1()
-		self._nlista2 = self.palavras2()
-		self._N1 = len(self._nlista1)
-		self._repeticoes = 0
-		for ng1 in self._nlista1:
-			self._flag = 0
-			for ng2 in self._nlista2:
-				if (self.comparaNGramas(ng1,ng2) == True):
-					if (self._flag == 0):
-						self._repeticoes += 1
-						self._flag = 1
-		self._contencao = (self._repeticoes / self._N1)
-		return self._contencao
+		'''
+		Calcula a contencao de dois dados documentos. Intersecao (repeticoes) dos dois documentos dividido pelo
+		numero de Ngramas do documento suspeito.
+		'''
+		self._nlista1 = self.gerarNGramas1()
+		self._nlista2 = self.gerarNGramas2()
+		if (len(self._nlista1) <= len(self._nlista2)):
+			
