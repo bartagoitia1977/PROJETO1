@@ -217,36 +217,26 @@ class Documento:
 			self._indice_ngrama += 1
 		return self._lista_de_ngramas2
 
-	def comparaNGramas(self,Ngrama_susp,Ngrama_ref):
-		'''
-		Compara 2 Ngramas: suspeito x referencia.
-		'''
-		self._Ngrama_susp = Ngrama_susp
-		self._Ngrama_ref = Ngrama_ref
-		self._teste_saida = False
-		self._count_string = 0
-		self._count_flag = 0
-		if (len(self._Ngrama_susp) != len(self._Ngrama_ref)):
-			self._teste_saida = False
-			return self._teste_saida
-		else:
-			for q in self._Ngrama_susp:
-				if (q != self._Ngrama_ref[self._count_string]):
-					self._count_flag += 1
-				self._count_string += 1
-			if (self._count_flag == 0):
-				self._teste_saida = True
-				return self._teste_saida
-			else:
-				self._teste_saida = False
-				return self._teste_saida
-
 	def contencao(self):
 		'''
-		Calcula a contencao de dois dados documentos. Intersecao (repeticoes) dos dois documentos dividido pelo
-		numero de Ngramas do documento suspeito.
+		Calcula o indice de contencao de dois documentos
 		'''
-		self._nlista1 = self.gerarNGramas1()
-		self._nlista2 = self.gerarNGramas2()
-		if (len(self._nlista1) <= len(self._nlista2)):
-			
+		self._L1 = self.gerarNGramas1()
+		self._L2 = self.gerarNGramas2()
+		self._repeticao = 0
+		for enegrama in self._L1:
+			self._count = 0
+			self._fim_de_curso = False
+			while (self._fim_de_curso == False) and (self._count < len(self._L2)):
+				if (enegrama == self._L2[self._count]):
+					self._repeticao += 1
+					self._fim_de_curso = True
+				self._count += 1
+		self._contencao = (self._repeticao / len(self._L1))
+		return "%.2f"%self._contencao
+
+	def repeticao(self):
+		return self._repeticao
+		
+
+	
