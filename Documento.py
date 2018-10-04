@@ -57,12 +57,27 @@ class No:
 			self.objetostring = str(self.objeto)
 		return self.objetostring
 
+class Ponteiro:
+	def __init__(self,lista):
+		self._ptr = lista.cabeca
+
+	def __next__(self):
+		if self._ptr.proximo is None:
+			raise StopIteration
+		else:
+			self._ptr = self._ptr.proximo
+			return self._ptr.objeto
+
 class LE:
 	'''
 	LISTA ENCADEADA SIMPLES (APENAS FUNCOES QUE SERÃO UTILIZADAS)
 	'''
 	def __init__(self):
 		self._cabeca = self._fim = No()
+
+	@property
+	def cabeca(self):
+		return self._cabeca
 		
 
 	def anexar(self,item):
@@ -101,23 +116,26 @@ class LE:
 		self.__item = item
 		finder = self._cabeca.proximo
 		if (finder is None):
-			raise StopIteration
+			raise IndexError
 		else:
 			while not(finder is None) and (finder.indice != self.__item):
 				finder = finder.proximo
 			if (finder is None):
-				raise StopIteration
+				raise IndexError 
 			else:
 				if (finder.indice == self.__item):
 					return finder.objeto
 
+	def __iter__(self):
+		return Ponteiro(self)
+
 	def __len__(self):
-		countaux = self._cabeca.proximo
-		count = 0
-		while not(countaux is None):
-			countaux = countaux.proximo
-			count += 1
-		return count
+		aux = self._fim
+		if (self._fim == self._cabeca):
+			return self._fim.indice
+		else:
+			return (self._fim.indice + 1)
+
 				
 class Documento:
 	'''
@@ -126,17 +144,18 @@ class Documento:
 	def __init__(self,documento1,documento2):
 		self._documento1 = documento1
 		self._documento2 = documento2
-		
-	def palavras1(self):
+
+	def palavras(self,documento):
 		'''
 		Concentra todas as palavras do documento adotando filtro de letras minusculas e minimizando
 		a poluição por caracteres alheios: espacos, pontos de interrogacao, exclamacao, etc.
 		Documento1
 		'''
-		self._lista_de_palavras1 = np.array([])
+		self._documento = documento
+		self._lista_de_palavras = np.array([])
 		self._nova_palavra = True
 		self._palavra = ""
-		for letra in self._documento1:
+		for letra in self._documento:
 			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
 			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
 			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "*") and
@@ -149,45 +168,22 @@ class Documento:
 					self._nova_palavra = True
 			else:
 				if (self._nova_palavra == True):
-					self._lista_de_palavras1 = np.append(self._lista_de_palavras1,self._palavra)
+					self._lista_de_palavras = np.append(self._lista_de_palavras,self._palavra)
 					self._palavra = ""
 					self._nova_palavra = False
 		if (self._nova_palavra == True):
-			self._lista_de_palavras1 = np.append(self._lista_de_palavras1,self._palavra)
+			self._lista_de_palavras = np.append(self._lista_de_palavras,self._palavra)
 			self._palavra = ""
 
-		return self._lista_de_palavras1
+		return self._lista_de_palavras
+
+	def palavras1(self):
+		self._lista_palavras1 = self.palavras(self._documento1)
+		return self._lista_palavras1
 
 	def palavras2(self):
-		'''
-		Concentra todas as palavras do documento adotando filtro de letras minusculas e minimizando
-		a poluição por caracteres alheios: espacos, pontos de interrogacao, exclamacao, etc.
-		Documento2
-		'''
-		self._lista_de_palavras2 = np.array([])
-		self._nova_palavra = True
-		self._palavra = ""
-		for letra in self._documento2:
-			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
-			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
-			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "*") and
-			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/") and (letra != "	")):
-				if (ord(letra) >= 65) and (ord(letra) <= 90):
-					self._palavra += chr(ord(letra) + 32)
-					self._nova_palavra = True
-				else:
-					self._palavra += letra
-					self._nova_palavra = True
-			else:
-				if (self._nova_palavra == True):
-					self._lista_de_palavras2 = np.append(self._lista_de_palavras2,self._palavra)
-					self._palavra = ""
-					self._nova_palavra = False
-		if (self._nova_palavra == True):
-			self._lista_de_palavras2 = np.append(self._lista_de_palavras2,self._palavra)
-			self._palavra = ""
-
-		return self._lista_de_palavras2
+		self._lista_palavras2 = self.palavras(self._documento2)
+		return self._lista_palavras2
 
 	def gerarNGramas1(self):
 		'''
@@ -236,7 +232,4 @@ class Documento:
 		return "%.2f"%self._contencao
 
 	def repeticao(self):
-		return self._repeticao
-		
-
-	
+		return self._repeticao	
