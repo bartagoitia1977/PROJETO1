@@ -159,7 +159,8 @@ class Documento:
 			if ((letra != " ") and (letra != ".") and (letra != ",") and (letra != "\n") and (letra != ";") and
 			 (letra != "?") and (letra != '"') and (letra != "(") and (letra != ")") and (letra != "[") and
 			  (letra != "]") and (letra != "{") and (letra != "}") and (letra != '\'') and (letra != "*") and
-			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/") and (letra != "	")):
+			   (letra != "!") and (letra != "+") and (letra != "-") and (letra != ":") and (letra != "/") and
+			    (letra != "	") and (letra != "\xa0")):
 				if (ord(letra) >= 65) and (ord(letra) <= 90):
 					self._palavra += chr(ord(letra) + 32)
 					self._nova_palavra = True
@@ -220,6 +221,7 @@ class Documento:
 		self._L1 = self.gerarNGramas1()
 		self._L2 = self.gerarNGramas2()
 		self._repeticao = 0
+		self._contencao = 0
 		for enegrama in self._L1:
 			self._count = 0
 			self._fim_de_curso = False
@@ -229,7 +231,4 @@ class Documento:
 					self._fim_de_curso = True
 				self._count += 1
 		self._contencao = (self._repeticao / len(self._L1))
-		return "%.2f"%self._contencao
-
-	def repeticao(self):
-		return self._repeticao	
+		return self._contencao
